@@ -44,7 +44,7 @@ public class AdminControlPanel extends JFrame {
 
 	private AdminControlPanel() {	
 		root = new DefaultMutableTreeNode("Root");
-						
+
 		userTotal = 0;
 		groupTotal = 0;
 		
@@ -145,11 +145,16 @@ public class AdminControlPanel extends JFrame {
 			}*/
 			else{
 				userId = userIdTextField.getText();
-				User u = new User();
-				database.addUser(userIdTextField.getText(), u);
+				User u = new User(userId);
+				database.addUser(userId, selectedNode.toString(), u);
 				userTotal++;
 				JOptionPane.showMessageDialog(null,userIdTextField.getText() + " has been added as a user.");
 							
+				//Expand tree
+				for(int i=0;i<tree.getRowCount();i++){
+				    tree.expandRow(i);
+				}
+				
 				selectedNode.add(new DefaultMutableTreeNode(userId));
 
 				//Expand tree
@@ -164,18 +169,23 @@ public class AdminControlPanel extends JFrame {
 	}
 
 	private class AddGroupButtonListener implements ActionListener{
-		public void actionPerformed(ActionEvent e){						
+		public void actionPerformed(ActionEvent e){			
+            DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
+
 			if (database.containsGroup(groupIdTextField.getText())){
 				JOptionPane.showMessageDialog(null,"ERROR: " + groupIdTextField.getText() + " already exists as a group.");	
 			}
+			else if (selectedNode == null){
+				JOptionPane.showMessageDialog(null,"ERROR: you must select where to store the group. Please select the root or a group in which to store your new group.");	
+			}
 			else{
 				groupId = groupIdTextField.getText();
-				UserGroup g = new UserGroup(groupIdTextField.getText());
-				database.addGroup(groupIdTextField.getText(), g);
+				UserGroup g = new UserGroup(groupId);
+				database.addGroup(groupId, selectedNode.toString(), g);
 				groupTotal++;
 				JOptionPane.showMessageDialog(null, groupIdTextField.getText() + " has been added as a group.");
 				
-				root.add(new DefaultMutableTreeNode(groupId));
+				selectedNode.add(new DefaultMutableTreeNode(groupId));
 				
 				//Expand tree
 				for(int i=0;i<tree.getRowCount();i++){

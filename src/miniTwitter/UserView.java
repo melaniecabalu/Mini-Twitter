@@ -15,12 +15,15 @@ public class UserView extends JFrame {
 	private JButton followUserButton;
 	private Database userDatabase;
 	private JTextField textField;
-
+	private User currentUser;
+	
 	/**
 	 * Create the frame.
 	 */
 	public UserView(String s) {
 		userDatabase = Database.getInstance();
+		
+		currentUser = userDatabase.getUser(s);
 
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 450, 450);
@@ -47,10 +50,17 @@ public class UserView extends JFrame {
 	private class FollowUserButtonListener implements ActionListener{
 		public void actionPerformed(ActionEvent e){	
 			userId = userIdTextField.getText();
-			// = userDatabase.getUser(userId);
 			
+			User followedUser = userDatabase.getUser(userId);
 			
+			//following
+			currentUser.follow(followedUser);
 			
+			//follower
+			followedUser.attach(currentUser);
+			
+			JOptionPane.showMessageDialog(null,"You have followed " + followedUser.toString());
+
 		}
 	}
 }

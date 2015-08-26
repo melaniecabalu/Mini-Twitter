@@ -23,16 +23,22 @@ public class Database {
 		containsFlag = false;
 	}
 	
-	public void addUser(String s, User u){
-		users.put(s, u);
+	public void addUser(String id, String parent, User u){
+		users.put(id, u);
+		getUser(id).setParent(parent);
 	}
 	
-	public void addGroup(String s, UserGroup g){
-		groups.put(s, g);
+	public void addGroup(String id, String parent, UserGroup g){
+		groups.put(id, g);
+		getGroup(id).setParent(parent);
 	}
 	
 	public User getUser(String s){
 		return users.get(s);
+	}
+	
+	public UserGroup getGroup(String s){
+		return groups.get(s);
 	}
 	
 	//testing?
@@ -49,7 +55,6 @@ public class Database {
 	}
 	
 	public boolean containsUser(String s){
-		//ISSUE - USER AND GROUP CANNOT HAVE THE SAME NAME
 		//reset containsFlag
 		containsFlag = false;
 		
@@ -63,7 +68,6 @@ public class Database {
 	}
 	
 	public boolean containsGroup(String s){
-		//ISSUE - USER AND GROUP CANNOT HAVE THE SAME NAME
 		//reset containsFlag
 		containsFlag = false;
 		
