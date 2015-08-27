@@ -2,6 +2,7 @@ package miniTwitter;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
+
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeNode;
 
@@ -54,6 +55,7 @@ public class User extends Subject implements Observer{
 	public ArrayList<String> newsFeed(){
 		return newsFeed;
 	}
+	
 
 	//WHEN USER IS THE OBSERVER
 	public void update(String tweet) {

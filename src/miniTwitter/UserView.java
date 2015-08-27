@@ -2,25 +2,28 @@ package miniTwitter;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
 public class UserView extends JFrame {
 
 	private JPanel contentPane;
-	private User targetUser;
 	private String userId;
 	private JTextField userIdTextField;
 	private JButton followUserButton;
 	private Database userDatabase;
 	private JTextField textField;
 	private User currentUser;
-	
+	private JList followingList;
+	private JLabel currentlyFollowingLabel;
+	private DefaultListModel<String> listModel;
+
 	/**
 	 * Create the frame.
 	 */
 	public UserView(String s) {
+		listModel = new DefaultListModel<String>();
+
 		userDatabase = Database.getInstance();
 		
 		currentUser = userDatabase.getUser(s);
@@ -43,7 +46,19 @@ public class UserView extends JFrame {
 		//Add an action listener to Open User View button
 		followUserButton.addActionListener(new FollowUserButtonListener());
 		
+		//set Currently Following Label
+		currentlyFollowingLabel = new JLabel("Currently Following:");
+		currentlyFollowingLabel.setBounds(20, 44, 177, 14);
+		
+		followingList = new JList<String>(listModel);
+		followingList.setBounds(19, 65, 386, 143);
+
+		
+		//Add to content pane
 		contentPane.add(followUserButton);
+		contentPane.add(currentlyFollowingLabel);
+		contentPane.add(followingList);
+
 	}
 	
 	//Follow user: add user to userId's follower list
@@ -53,14 +68,19 @@ public class UserView extends JFrame {
 			
 			User followedUser = userDatabase.getUser(userId);
 			
-			//following
-			currentUser.follow(followedUser);
+			if (userDatabase.containsUser(userId) == false){
+				JOptionPane.showMessageDialog(null,"ERROR: that user ID does not exist.");
+			}
+			else{
+				//following
+				currentUser.follow(followedUser);
 			
-			//follower
-			followedUser.attach(currentUser);
+				//attach to the followers of user
+				followedUser.attach(currentUser);
 			
-			JOptionPane.showMessageDialog(null,"You have followed " + followedUser.toString());
-
+				JOptionPane.showMessageDialog(null,"You are now following " + followedUser.getId() + ".");
+				listModel.addElement(followedUser.getId());
+			}
 		}
 	}
 }
