@@ -13,6 +13,7 @@ public class User extends Subject implements Observer{
 	private ArrayList<User> followings;
 	private ArrayList<String> newsFeed;
 	private ArrayList<String> tweets;
+	private boolean followingFlag;
 	
 	public User(){
 		followers = new ArrayList<User>();
@@ -51,6 +52,16 @@ public class User extends Subject implements Observer{
 		this.parentGroup = s;
 	}
 	
+	public boolean isFollowing(User u){
+		if (followings.contains(u)){
+			followingFlag = true;
+			return followingFlag;
+		}
+		else{
+			followingFlag = false;
+			return followingFlag;
+		}
+	}
 	
 	public ArrayList<String> newsFeed(){
 		return newsFeed;

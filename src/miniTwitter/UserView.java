@@ -71,6 +71,12 @@ public class UserView extends JFrame {
 			if (userDatabase.containsUser(userId) == false){
 				JOptionPane.showMessageDialog(null,"ERROR: that user ID does not exist.");
 			}
+			else if (currentUser.isFollowing(followedUser)){
+				JOptionPane.showMessageDialog(null,"ERROR: you are already following " + userId + ".");
+			}
+			else if (userId.equals(currentUser.getId())){
+				JOptionPane.showMessageDialog(null,"ERROR: you cannot follow yourself.");
+			}
 			else{
 				//following
 				currentUser.follow(followedUser);
