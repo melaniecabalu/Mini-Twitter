@@ -2,6 +2,8 @@ package miniTwitter;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
@@ -14,6 +16,7 @@ public class UserView extends JFrame {
 	private Database userDatabase;
 	private JTextField textField;
 	private User currentUser;
+	private ArrayList<String> followingIdList;
 	private JList followingList;
 	private JLabel currentlyFollowingLabel;
 	private DefaultListModel<String> listModel;
@@ -21,9 +24,11 @@ public class UserView extends JFrame {
 	/**
 	 * Create the frame.
 	 */
+	@SuppressWarnings("unchecked")
 	public UserView(String s) {
 		listModel = new DefaultListModel<String>();
-
+		followingIdList = new ArrayList<String>();
+		
 		userDatabase = Database.getInstance();
 		
 		currentUser = userDatabase.getUser(s);
@@ -52,8 +57,14 @@ public class UserView extends JFrame {
 		
 		followingList = new JList<String>(listModel);
 		followingList.setBounds(19, 65, 386, 143);
-
 		
+		//Populate the Current Following list with previously followed users
+		followingIdList = (ArrayList<String>) currentUser.getFollowerIds().clone();
+
+		for (int i = 0; i < followingIdList.size(); i++){
+			listModel.addElement(followingIdList.get(i));
+		}
+				
 		//Add to content pane
 		contentPane.add(followUserButton);
 		contentPane.add(currentlyFollowingLabel);

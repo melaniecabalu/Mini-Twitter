@@ -52,6 +52,18 @@ public class User extends Subject implements Observer{
 		this.parentGroup = s;
 	}
 	
+	public ArrayList<String> getFollowerIds(){
+		ArrayList<String> f = new ArrayList<String>();
+		
+		System.out.println("Following: " + followings.size());
+		if (!followings.isEmpty()){
+			for (int i = 0; i < followings.size(); i++){
+				f.add(followings.get(i).getId());
+			}
+		}
+		return f;
+	}
+	
 	public boolean isFollowing(User u){
 		if (followings.contains(u)){
 			followingFlag = true;
