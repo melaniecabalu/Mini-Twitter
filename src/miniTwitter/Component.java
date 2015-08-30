@@ -1,5 +1,7 @@
 package miniTwitter;
 
-public abstract class Component {
-	abstract String getId();
+public interface Component {
+	void accept(Visitor v);
+
+	void setParent(String parent);
 }

@@ -1,26 +1,16 @@
 package miniTwitter;
 
 import java.util.ArrayList;
-import java.util.Enumeration;
 
-import javax.swing.tree.MutableTreeNode;
-import javax.swing.tree.TreeNode;
-
-public class User extends Subject implements Observer{
+public class User extends Subject implements Observer, Component, Visitable{
 	private String id;
-	private String parentGroup;
+	private String parentGroup; //do i need this
 	private ArrayList<User> followers;
 	private ArrayList<User> followings;
 	private ArrayList<String> newsFeed;
 	private ArrayList<String> tweets;
 	private boolean followingFlag;
-	
-	public User(){
-		followers = new ArrayList<User>();
-		followings = new ArrayList<User>();
-		newsFeed = new ArrayList<String>();
-		tweets = new ArrayList<String>();
-	}
+	private String tweet;
 	
 	public User(String id){
 		this.id = id;
@@ -30,17 +20,7 @@ public class User extends Subject implements Observer{
 		tweets = new ArrayList<String>();
 	}
 	
-	public User(String id, String parent){
-		this.id = id;
-		parentGroup = parent;
-		followers = new ArrayList<User>();
-		followings = new ArrayList<User>();
-		newsFeed = new ArrayList<String>();
-		tweets = new ArrayList<String>();
-	}
-		
-	
-	public void acceptVisitor(Visitor v){
+	public void accept(Visitor v){
 		v.atUser(this);
 	}
 	
@@ -55,7 +35,6 @@ public class User extends Subject implements Observer{
 	public ArrayList<String> getFollowerIds(){
 		ArrayList<String> f = new ArrayList<String>();
 		
-		System.out.println("Following: " + followings.size());
 		if (!followings.isEmpty()){
 			for (int i = 0; i < followings.size(); i++){
 				f.add(followings.get(i).getId());
@@ -75,14 +54,21 @@ public class User extends Subject implements Observer{
 		}
 	}
 	
-	public ArrayList<String> newsFeed(){
+	public ArrayList<String> getNewsFeed(){
 		return newsFeed;
 	}
 	
-
+	public ArrayList<String> getTweets(){
+		return tweets;
+	}
+	
 	//WHEN USER IS THE OBSERVER
 	public void update(String tweet) {
 		newsFeed.add(tweet);
+	}
+	
+	public String tweet(){
+		return tweet;
 	}
 	
 	public void follow(User u){
@@ -96,11 +82,17 @@ public class User extends Subject implements Observer{
 	}
 	
 	//WHEN USER IS THE SUBJECT
-	public void notify(String tweet){
-		for (int i= 0; i <= followers.size(); i++){
+	public void notify(String tweet){		
+		//Add tweet to user's own news feed
+		newsFeed.add(tweet);
+		
+		//Must be lowercase to compare to positive words
+		this.tweet = tweet.toLowerCase();
+					
+		//Update followers' news feeds
+		for (int i= 0; i < followers.size(); i++){		
+			//Call follower's update method
 			followers.get(i).update(tweet);
 		}
-
 	}
-
 }

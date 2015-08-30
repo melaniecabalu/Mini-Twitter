@@ -2,8 +2,9 @@ package miniTwitter;
 
 import java.util.ArrayList;
 
-public class UserGroup {
+public class UserGroup implements Component{
 	private String id;
+	private ArrayList<User> groupMembers;
 	private String parentGroup;
 
 	public UserGroup(){
@@ -28,5 +29,11 @@ public class UserGroup {
 	
 	public String getId(){
 		return id;
+	}
+
+	@Override
+	public void accept(Visitor v) {
+		// TODO Auto-generated method stub
+		
 	}
 }

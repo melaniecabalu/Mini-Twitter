@@ -1,13 +1,15 @@
 package miniTwitter;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
-public class Database {
+public class Database implements Visitable{
 	private Map<String, User> users;
 	private Map<String, UserGroup> groups;
 	private static Database instance; 		//Ensure only one instance of Database
-	private int messagesTotal;
+	private int userTotal;
+	private int groupTotal;
 	private boolean containsFlag;
 	
 	public static Database getInstance(){
@@ -17,7 +19,6 @@ public class Database {
 	}
 	
 	private Database(){
-		int messagesTotal = 0;
 		users = new HashMap<String, User>();
 		groups = new HashMap<String, UserGroup>();
 		containsFlag = false;
@@ -26,11 +27,13 @@ public class Database {
 	public void addUser(String id, String parent, User u){
 		users.put(id, u);
 		getUser(id).setParent(parent);
+		userTotal++;
 	}
 	
 	public void addGroup(String id, String parent, UserGroup g){
 		groups.put(id, g);
 		getGroup(id).setParent(parent);
+		groupTotal++;
 	}
 	
 	public User getUser(String s){
@@ -41,17 +44,17 @@ public class Database {
 		return groups.get(s);
 	}
 	
+	public int getUserTotal(){
+		return userTotal;
+	}
+	
+	public int getGroupTotal(){
+		return groupTotal;
+	}
+	
 	//testing?
 	public Map<String, User> getUsers(){
 		return users;
-	}
-	
-	public void incrementMessages(){
-		messagesTotal++;
-	}
-	
-	public int getMessagesTotal(){
-		return messagesTotal;
 	}
 	
 	public boolean containsUser(String s){
@@ -80,4 +83,9 @@ public class Database {
 		}
 	}
 
+	@Override
+	public void accept(Visitor v) {
+		v.atDatabase(this);
+		
+	}
 }
