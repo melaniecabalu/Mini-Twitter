@@ -148,6 +148,9 @@ public class AdminControlPanel extends JFrame{
 				
 				showMessage(userId + " has been added as a user.");
 			}
+			else if (database.containsGroup(selectedNode.toString()) == false && selectedNode.toString().equals("Root") == false){
+				showMessage("ERROR: you must store your user in a group OR the root.");
+			}
 			else{				
 				//Add user to the database
 				database.addUser(userId, selectedNode.toString(), u);
@@ -157,11 +160,8 @@ public class AdminControlPanel extends JFrame{
 
 				showMessage(userIdTextField.getText() + " has been added as a user.");
 			}
-			
 			//Reload the JTree
 			expandTree();
-			expandAllNodes(tree, 0, tree.getRowCount());
-
 		}
 	}
 
@@ -169,29 +169,23 @@ public class AdminControlPanel extends JFrame{
 		public void actionPerformed(ActionEvent e){			
 			selectedNode = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
 			groupId = groupIdTextField.getText();
-			UserGroup g = new UserGroup(groupId);
 			
-			if (database.containsGroup(groupId)){
-				showMessage("ERROR: " + groupIdTextField.getText() + " already exists as a group.");
+			if (selectedNode == null){
+				addGroup(groupId, root);
 			}
-			else if (selectedNode == null){
-				//Add group to the database
-				database.addGroup(groupId, "Root", g);
-				
-				//Add group to the root
-				root.add(new DefaultMutableTreeNode(groupId));
-				expandAllNodes(tree, 0, tree.getRowCount());
-				
-				showMessage(groupId + " has been added as a group.");
+			else if (database.containsGroup(groupId)){
+				showMessage("ERROR: " + groupId + " already exists as a group.");
+
+			}
+			else if (database.containsGroup(selectedNode.toString()) == false && selectedNode.toString().equals("Root") == false){
+				showMessage("ERROR: you must add a group to either the root or another group.");
 			}
 			else{
-				database.addGroup(groupId, selectedNode.toString(), g);
-				showMessage(groupIdTextField.getText() + " has been added as a group. Please add a user to your group.");
-				selectedNode.add(new DefaultMutableTreeNode(groupId));   			
+				addGroup(groupId, selectedNode);
 			}
 			
+			//Reload the JTree
 			expandTree();
-			expandAllNodes(tree, 0, tree.getRowCount());
 		}
 	}
 	
@@ -216,7 +210,7 @@ public class AdminControlPanel extends JFrame{
 		public void actionPerformed(ActionEvent e){			
 			selectedNode = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
 
-            if (selectedNode == null){
+            if (selectedNode == null || database.containsGroup(selectedNode.toString())){
     			showMessage("ERROR: Please select a user.");
             }
             else{
@@ -261,19 +255,21 @@ public class AdminControlPanel extends JFrame{
 	}
 	
 	public void expandTree(){
+		((DefaultTreeModel) model).reload();
+
 		for(int i=0;i<tree.getRowCount();i++){
 		    tree.expandRow(i);
 		}
-		((DefaultTreeModel) model).reload();
 	}
 	
-	private void expandAllNodes(JTree tree, int startingIndex, int rowCount){
-	    for(int i=startingIndex;i<rowCount;++i){
-	        tree.expandRow(i);
-	    }
-
-	    if(tree.getRowCount()!=rowCount){
-	        expandAllNodes(tree, rowCount, tree.getRowCount());
-	    }
+	public void addGroup(String id, DefaultMutableTreeNode node){
+		UserGroup g = new UserGroup(id);
+		
+		//Add group to the database
+		database.addGroup(id, node.toString(), g);
+		
+		//Add group to the root
+		node.add(new DefaultMutableTreeNode(id));				
+		showMessage(id + " has been added as a group.");
 	}
 }

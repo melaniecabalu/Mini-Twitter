@@ -43,6 +43,10 @@ public class Database implements Visitable{
 		return groups.get(s);
 	}
 	
+	public Map<String, UserGroup> getGroup(){
+		return groups;
+	}
+	
 	public int getUserTotal(){
 		return userTotal;
 	}

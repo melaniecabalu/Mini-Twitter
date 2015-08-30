@@ -25,6 +25,7 @@ public class PositivePercentageVisitor implements Visitor{
 		for (int i = 0; i < words.length; i++){
 			if (u.tweet().contains(words[i])){
 				posWords++;
+				break;
 			}
 		}
 		if (posWords > 0)
