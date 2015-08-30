@@ -5,9 +5,10 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeModel;
-
+import javax.swing.JScrollPane;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.ScrollPane;
 
 @SuppressWarnings("serial")
 public class AdminControlPanel extends JFrame{
@@ -29,6 +30,7 @@ public class AdminControlPanel extends JFrame{
 	private TreeModel model;
 	private DefaultMutableTreeNode root;
 	private DefaultMutableTreeNode selectedNode;	
+	private JScrollPane scrollPane;
 	
 	//Ensures one instance of AdminControlPanel
 	public static AdminControlPanel getInstance(){
@@ -114,6 +116,7 @@ public class AdminControlPanel extends JFrame{
 		contentPane = new JPanel();
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
+	
 
 		//Add components to contentPane 
 		contentPane.add(userIdTextField);
@@ -227,19 +230,23 @@ public class AdminControlPanel extends JFrame{
 	}
 	
 	public void buildTree(){
-		tree = new JTree(root);
-		tree.setBounds(10, 6, 152, 295);
-		contentPane.add(tree);
-		selectedNode = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
-		model = tree.getModel();
 		
 		ImageIcon imageIcon = new ImageIcon(AdminControlPanel.class.getResource("/folder_closed.png"));
 		DefaultTreeCellRenderer renderer = new DefaultTreeCellRenderer();
 		
 		//Set folder icon to non-leaf nodes
 		renderer.setOpenIcon(imageIcon);
-        tree.setCellRenderer(renderer);
-	}
+        tree = new JTree(root);
+        tree.setBounds(10, 6, 152, 295);
+        contentPane.add(tree);
+        selectedNode = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
+        model = tree.getModel();
+        tree.setCellRenderer(renderer);   
+        
+        JScrollPane scrollPane_1 = new JScrollPane(tree);
+        scrollPane_1.setBounds(10, 6, 152, 295);
+        contentPane.add(scrollPane_1);
+   	}
 	
 	public void showMessage(String message){
 		JOptionPane.showMessageDialog(null, message);
