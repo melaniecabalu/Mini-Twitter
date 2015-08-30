@@ -134,31 +134,21 @@ public class AdminControlPanel extends JFrame{
 		public void actionPerformed(ActionEvent e){	
 			selectedNode = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
 			userId = userIdTextField.getText();
-			User u = new User(userId);
-			
-			if (database.containsUser(userId)){
-				showMessage("ERROR: " + userIdTextField.getText() + " already exists as a user.");
+
+			if (userId.isEmpty() == true){
+				showMessage("ERROR: Please enter a user ID.");
 			}
 			else if (selectedNode == null){
-				//Add user to database
-				database.addUser(userId, "Root", u);
-				
-				//Add user to the root of the JTree
-				root.add(new DefaultMutableTreeNode(userId));
-				
-				showMessage(userId + " has been added as a user.");
+				addUser(userId, root);
+			}
+			else if (database.containsUser(userId)){
+				showMessage("ERROR: " + userIdTextField.getText() + " already exists as a user.");
 			}
 			else if (database.containsGroup(selectedNode.toString()) == false && selectedNode.toString().equals("Root") == false){
 				showMessage("ERROR: you must store your user in a group OR the root.");
 			}
 			else{				
-				//Add user to the database
-				database.addUser(userId, selectedNode.toString(), u);
-				
-				//Add user to the selected group
-				selectedNode.add(new DefaultMutableTreeNode(userId));
-
-				showMessage(userIdTextField.getText() + " has been added as a user.");
+				addUser(userId, selectedNode);
 			}
 			//Reload the JTree
 			expandTree();
@@ -170,7 +160,10 @@ public class AdminControlPanel extends JFrame{
 			selectedNode = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
 			groupId = groupIdTextField.getText();
 			
-			if (selectedNode == null){
+			if (groupId.isEmpty() == true){
+				showMessage("ERROR: please enter a group ID.");
+			}
+			else if (selectedNode == null){
 				addGroup(groupId, root);
 			}
 			else if (database.containsGroup(groupId)){
@@ -268,8 +261,19 @@ public class AdminControlPanel extends JFrame{
 		//Add group to the database
 		database.addGroup(id, node.toString(), g);
 		
-		//Add group to the root
+		//Add group to the node
 		node.add(new DefaultMutableTreeNode(id));				
 		showMessage(id + " has been added as a group.");
+	}
+	
+	public void addUser(String id, DefaultMutableTreeNode node){
+		User u = new User(id);	
+		
+		//Add user to the database
+		database.addUser(id,  node.toString(), u);
+		
+		//Add user to the node
+		node.add(new DefaultMutableTreeNode(id));
+		showMessage(id + " has been added as a user.");
 	}
 }
