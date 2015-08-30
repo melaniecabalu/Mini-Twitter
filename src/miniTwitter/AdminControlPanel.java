@@ -40,7 +40,7 @@ public class AdminControlPanel extends JFrame{
 	private AdminControlPanel() {	
 		root = new DefaultMutableTreeNode("Root");
 		database = Database.getInstance();
-		
+				
 		//Set bounds and size of the window 
 		setBounds(100, 100, 656, 350);
 		
@@ -138,11 +138,11 @@ public class AdminControlPanel extends JFrame{
 			if (userId.isEmpty() == true){
 				showMessage("ERROR: Please enter a user ID.");
 			}
-			else if (selectedNode == null){
-				addUser(userId, root);
-			}
 			else if (database.containsUser(userId)){
 				showMessage("ERROR: " + userIdTextField.getText() + " already exists as a user.");
+			}
+			else if (selectedNode == null){
+				addUser(userId, root);
 			}
 			else if (database.containsGroup(selectedNode.toString()) == false && selectedNode.toString().equals("Root") == false){
 				showMessage("ERROR: you must store your user in a group OR the root.");
@@ -163,12 +163,12 @@ public class AdminControlPanel extends JFrame{
 			if (groupId.isEmpty() == true){
 				showMessage("ERROR: please enter a group ID.");
 			}
-			else if (selectedNode == null){
-				addGroup(groupId, root);
-			}
 			else if (database.containsGroup(groupId)){
 				showMessage("ERROR: " + groupId + " already exists as a group.");
 
+			}
+			else if (selectedNode == null){
+				addGroup(groupId, root);
 			}
 			else if (database.containsGroup(selectedNode.toString()) == false && selectedNode.toString().equals("Root") == false){
 				showMessage("ERROR: you must add a group to either the root or another group.");
@@ -179,23 +179,6 @@ public class AdminControlPanel extends JFrame{
 			
 			//Reload the JTree
 			expandTree();
-		}
-	}
-	
-	
-	private class ShowUserTotalButtonListener implements ActionListener{
-		public void actionPerformed(ActionEvent e){	
-			UserTotalVisitor userTotal = new UserTotalVisitor();
-			database.accept(userTotal);
-			showMessage("Total number of users: " + userTotal.size());
-		}
-	}
-	
-	private class ShowGroupTotalButtonListener implements ActionListener{
-		public void actionPerformed(ActionEvent e){		
-			GroupTotalVisitor groupTotal = new GroupTotalVisitor();
-			database.accept(groupTotal);
-			showMessage("Total number of groups: " + groupTotal.size());
 		}
 	}
 	
@@ -213,10 +196,25 @@ public class AdminControlPanel extends JFrame{
 		}
 	}
 	
+	private class ShowUserTotalButtonListener implements ActionListener{
+		public void actionPerformed(ActionEvent e){	
+			UserTotalVisitor userTotal = new UserTotalVisitor();
+			database.accept(userTotal);
+			showMessage("Total number of users: " + userTotal.size());
+		}
+	}
+	
+	private class ShowGroupTotalButtonListener implements ActionListener{
+		public void actionPerformed(ActionEvent e){		
+			GroupTotalVisitor groupTotal = new GroupTotalVisitor();
+			database.accept(groupTotal);
+			showMessage("Total number of groups: " + groupTotal.size());
+		}
+	}
+	
 	private class ShowMessagesTotalButtonListener implements ActionListener{
 		public void actionPerformed(ActionEvent e){		
 			MessagesTotalVisitor messagesTotalVis = MessagesTotalVisitor.getInstance();
-			//showMessage("Total number of messages: " + database.getMessagesTotal());
 			showMessage("Total number of messages: " + messagesTotalVis.size());
 		}
 	}
@@ -258,8 +256,8 @@ public class AdminControlPanel extends JFrame{
 	public void addGroup(String id, DefaultMutableTreeNode node){
 		UserGroup g = new UserGroup(id);
 		
-		//Add group to the database
-		database.addGroup(id, node.toString(), g);
+		//Add group to the database		
+		database.addGroup(id, g, database.getGroup(node.toString()));
 		
 		//Add group to the node
 		node.add(new DefaultMutableTreeNode(id));				
@@ -269,8 +267,8 @@ public class AdminControlPanel extends JFrame{
 	public void addUser(String id, DefaultMutableTreeNode node){
 		User u = new User(id);	
 		
-		//Add user to the database
-		database.addUser(id,  node.toString(), u);
+		//Add user to the database 
+		database.addUser(id, u, database.getGroup(node.toString()));
 		
 		//Add user to the node
 		node.add(new DefaultMutableTreeNode(id));

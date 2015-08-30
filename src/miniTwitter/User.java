@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class User extends Subject implements Observer, Component, Visitable{
 	private String id;
-	private String parentGroup; //do i need this
+	private UserGroup parentGroup; //do i need this
 	private ArrayList<User> followers;
 	private ArrayList<User> followings;
 	private ArrayList<String> newsFeed;
@@ -28,8 +28,13 @@ public class User extends Subject implements Observer, Component, Visitable{
 		return id;
 	}
 	
-	public void setParent(String s){
-		this.parentGroup = s;
+	public void setParent(UserGroup parentGroup){
+		this.parentGroup = parentGroup;
+		parentGroup.addChild(this);
+	}
+	
+	public UserGroup getParent(){
+		return parentGroup;
 	}
 	
 	public ArrayList<String> getFollowerIds(){

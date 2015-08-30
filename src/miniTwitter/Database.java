@@ -6,6 +6,7 @@ import java.util.Map;
 public class Database implements Visitable{
 	private Map<String, User> users;
 	private Map<String, UserGroup> groups;
+	private UserGroup root;
 	private static Database instance; 		//Ensure only one instance of Database
 	private int userTotal;
 	private int groupTotal;
@@ -20,18 +21,36 @@ public class Database implements Visitable{
 	private Database(){
 		users = new HashMap<String, User>();
 		groups = new HashMap<String, UserGroup>();
+		root = new UserGroup("Root");
 		containsFlag = false;
+		
+		//Add root to the database
+		groups.put("Root", root);
 	}
 	
-	public void addUser(String id, String parent, User u){
+	public void addUser(String id, User u, UserGroup parentGroup){
+		//Add the user to database user array
 		users.put(id, u);
-		getUser(id).setParent(parent);
+		
+		//Add user to the parent group	
+		parentGroup.addChild(getUser(id));
+				
+		//Set the user's parent group
+		getUser(id).setParent(parentGroup);
+		
 		userTotal++;
 	}
 	
-	public void addGroup(String id, String parent, UserGroup g){
+	public void addGroup(String id, UserGroup g, UserGroup parentGroup){
+		//Add the user to database
 		groups.put(id, g);
-		getGroup(id).setParent(parent);
+		
+		//Add the subgroup to the parent
+		parentGroup.addSubgroup(getGroup(id));
+
+		//Set the group BLAH FIX THIS WORDING IT SUCKS
+		getGroup(id).setParent(parentGroup);
+		
 		groupTotal++;
 	}
 	
