@@ -160,6 +160,8 @@ public class AdminControlPanel extends JFrame{
 			
 			//Reload the JTree
 			expandTree();
+			expandAllNodes(tree, 0, tree.getRowCount());
+
 		}
 	}
 
@@ -178,7 +180,8 @@ public class AdminControlPanel extends JFrame{
 				
 				//Add group to the root
 				root.add(new DefaultMutableTreeNode(groupId));
-								
+				expandAllNodes(tree, 0, tree.getRowCount());
+				
 				showMessage(groupId + " has been added as a group.");
 			}
 			else{
@@ -187,8 +190,8 @@ public class AdminControlPanel extends JFrame{
 				selectedNode.add(new DefaultMutableTreeNode(groupId));   			
 			}
 			
-			//Reload the JTree
 			expandTree();
+			expandAllNodes(tree, 0, tree.getRowCount());
 		}
 	}
 	
@@ -262,5 +265,15 @@ public class AdminControlPanel extends JFrame{
 		    tree.expandRow(i);
 		}
 		((DefaultTreeModel) model).reload();
+	}
+	
+	private void expandAllNodes(JTree tree, int startingIndex, int rowCount){
+	    for(int i=startingIndex;i<rowCount;++i){
+	        tree.expandRow(i);
+	    }
+
+	    if(tree.getRowCount()!=rowCount){
+	        expandAllNodes(tree, rowCount, tree.getRowCount());
+	    }
 	}
 }
