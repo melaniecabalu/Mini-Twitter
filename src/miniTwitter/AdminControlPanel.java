@@ -8,7 +8,6 @@ import javax.swing.tree.TreeModel;
 import javax.swing.JScrollPane;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import java.awt.ScrollPane;
 
 @SuppressWarnings("serial")
 public class AdminControlPanel extends JFrame{
@@ -30,7 +29,6 @@ public class AdminControlPanel extends JFrame{
 	private TreeModel model;
 	private DefaultMutableTreeNode root;
 	private DefaultMutableTreeNode selectedNode;	
-	private JScrollPane scrollPane;
 	
 	//Ensures one instance of AdminControlPanel
 	public static AdminControlPanel getInstance(){

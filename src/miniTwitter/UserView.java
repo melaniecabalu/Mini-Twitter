@@ -3,7 +3,6 @@ package miniTwitter;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
@@ -29,6 +28,9 @@ public class UserView extends JFrame{
 	private JTextField tweetField;	
 	private JButton postTweetButton;
 	private JLabel newsFeedLabel;
+	
+	private JScrollPane followingScrollPane;
+	private JScrollPane newsFeedScrollPane;
 	
 	/**
 	 * Create the frame.
@@ -71,7 +73,7 @@ public class UserView extends JFrame{
 		
 		//Initialize the Following List
 		followingList = new JList<String>(followingListModel);
-		followingList.setBounds(19, 65, 386, 143);
+		followingList.setBounds(10, 65, 414, 143);
 		
 		//Get all the IDs of followed users and store in the Following List
 		followingIdList = (ArrayList<String>) currentUser.getFollowerIds().clone();
@@ -112,7 +114,14 @@ public class UserView extends JFrame{
 		contentPane.add(postTweetButton);
 		contentPane.add(newsFeedLabel);
 		contentPane.add(newsFeedList);
-
+		
+		followingScrollPane = new JScrollPane(followingList);
+		followingScrollPane.setBounds(10, 64, 414, 144);
+		contentPane.add(followingScrollPane);
+		
+		newsFeedScrollPane = new JScrollPane(newsFeedList);
+		newsFeedScrollPane.setBounds(20, 287, 385, 114);
+		contentPane.add(newsFeedScrollPane);
 	}
 	
 	public String getUserId(){

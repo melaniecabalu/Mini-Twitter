@@ -26,6 +26,7 @@ public class UserGroup implements Component{
 	
 	public void setParent(UserGroup parentGroup){
 		this.parentGroup = parentGroup;
+		this.parentGroup.addSubgroup(this);
 	}
 	
 	public void addChild(User user){
