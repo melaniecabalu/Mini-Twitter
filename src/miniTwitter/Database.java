@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Database implements Visitable{
-	private Map<String, User> users;
-	private Map<String, UserGroup> groups;
+	private Map<String, Component> users;
+	private Map<String, Component> groups;
 	private UserGroup root;
 	private static Database instance; 		//Ensure only one instance of Database
 	private int userTotal;
@@ -20,8 +20,8 @@ public class Database implements Visitable{
 	}
 	
 	private Database(){
-		users = new HashMap<String, User>();
-		groups = new HashMap<String, UserGroup>();
+		users = new HashMap<String, Component>();
+		groups = new HashMap<String, Component>();
 		root = new UserGroup("Root");
 		containsFlag = false;
 		
@@ -30,7 +30,7 @@ public class Database implements Visitable{
 	}
 	
 	//Method to add user to the database
-	public void addUser(String id, User u, UserGroup parentGroup){
+	public void addUser(String id, Component u, Component parentGroup){		
 		//Store user in the User map
 		users.put(id, u);
 		
@@ -45,7 +45,7 @@ public class Database implements Visitable{
 	}
 	
 	//Method to add UserGroup to the database
-	public void addGroup(String id, UserGroup g, UserGroup parentGroup){
+	public void addGroup(String id, Component g, Component parentGroup){
 		//Put group in the UserGroup map
 		groups.put(id, g);
 		
@@ -60,12 +60,12 @@ public class Database implements Visitable{
 	}
 	
 	//Method to return user with specified id 
-	public User getUser(String id){
+	public Component getUser(String id){
 		return users.get(id);
 	}
 	
 	//Method to return UserGroup with specified id
-	public UserGroup getGroup(String id){
+	public Component getGroup(String id){
 		return groups.get(id);
 	}
 	

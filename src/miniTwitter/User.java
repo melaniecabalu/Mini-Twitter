@@ -4,9 +4,9 @@ import java.util.ArrayList;
 
 public class User extends Subject implements Observer, Component, Visitable{
 	private String id;
-	private UserGroup parentGroup;
-	private ArrayList<User> followers;
-	private ArrayList<User> followings;
+	private Component parentGroup;
+	private ArrayList<Component> followers;
+	private ArrayList<Component> followings;
 	private ArrayList<String> newsFeed;
 	private ArrayList<String> tweets;
 	private boolean followingFlag;
@@ -14,8 +14,8 @@ public class User extends Subject implements Observer, Component, Visitable{
 	
 	public User(String id){
 		this.id = id;
-		followers = new ArrayList<User>();
-		followings = new ArrayList<User>();
+		followers = new ArrayList<Component>();
+		followings = new ArrayList<Component>();
 		newsFeed = new ArrayList<String>();
 		tweets = new ArrayList<String>();
 	}
@@ -24,12 +24,11 @@ public class User extends Subject implements Observer, Component, Visitable{
 		return id;
 	}
 	
-	public void setParent(UserGroup parentGroup){
+	public void setParent(Component parentGroup){
 		this.parentGroup = parentGroup;
-		parentGroup.addChild(this);
 	}
 	
-	public UserGroup getParent(){
+	public Component getParent(){
 		return parentGroup;
 	}
 	
@@ -44,7 +43,7 @@ public class User extends Subject implements Observer, Component, Visitable{
 		return f;
 	}
 	
-	public boolean isFollowing(User u){
+	public boolean isFollowing(Component u){
 		if (followings.contains(u)){
 			followingFlag = true;
 			return followingFlag;
@@ -72,13 +71,13 @@ public class User extends Subject implements Observer, Component, Visitable{
 		return tweet;
 	}
 	
-	public void follow(User u){
+	public void follow(Component u){
 		followings.add(u);
 	}
 
 	//WHEN USER IS THE SUBJECT
 	@Override
-	public void attach(User u) {
+	public void attach(Component u) {
 		followers.add(u);
 	}
 	
@@ -99,5 +98,15 @@ public class User extends Subject implements Observer, Component, Visitable{
 	
 	public void accept(Visitor v){
 		v.atUser(this);
+	}
+
+	@Override
+	public void addChild(Component user) {
+	    throw new UnsupportedOperationException("Invalid operation for User object.");
+	}
+
+	@Override
+	public void addSubgroup(Component group) {
+	    throw new UnsupportedOperationException("Invalid operation for User object..");
 	}
 }

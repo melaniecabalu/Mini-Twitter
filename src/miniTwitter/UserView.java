@@ -3,7 +3,7 @@ package miniTwitter;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-
+import java.util.List;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
@@ -16,14 +16,14 @@ public class UserView extends JFrame{
 	private JButton followUserButton;
 	private Database userDatabase;
 	private JLabel currentlyFollowingLabel;
-	private ArrayList<String> followingIdList;
+	private List<String> followingIdList;
 	private DefaultListModel<String> followingListModel;
 	private JList<String> followingList;
 	private JLabel newsFeedLabel;
-	private ArrayList<String> newsFeed;
+	private List<String> newsFeed;
 	private DefaultListModel<String> newsFeedListModel;
 	private JList<String> newsFeedList;
-	private User currentUser;
+	private Component currentUser;
 	private JTextField tweetField;	
 	private JButton postTweetButton;
 	private JScrollPane followingScrollPane;
@@ -48,7 +48,7 @@ public class UserView extends JFrame{
 				
 		//Set the user view for the current user
 		currentUser = userDatabase.getUser(s);
-
+		
 		//Specify what happens when the close button is clicked
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		
@@ -134,7 +134,7 @@ public class UserView extends JFrame{
 	
 	//Method to return the current user's id
 	public String getUserId(){
-		return currentUser.getId();
+		return currentUser.getId();		
 	}
 	
 	private class FollowUserButtonListener implements ActionListener{
@@ -143,7 +143,7 @@ public class UserView extends JFrame{
 			userId = userIdTextField.getText();
 			
 			//Retrieve the user associated with the user ID
-			User followedUser = userDatabase.getUser(userId);
+			Component followedUser = userDatabase.getUser(userId);
 			
 			//If the user does not exist
 			if (userDatabase.containsUser(userId) == false){
