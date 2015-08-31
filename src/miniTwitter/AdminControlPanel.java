@@ -29,6 +29,7 @@ public class AdminControlPanel extends JFrame{
 	private TreeModel model;
 	private DefaultMutableTreeNode root;
 	private DefaultMutableTreeNode selectedNode;	
+	private JScrollPane treeScrollPane;
 	
 	//Ensures one instance of AdminControlPanel
 	public static AdminControlPanel getInstance(){
@@ -38,10 +39,13 @@ public class AdminControlPanel extends JFrame{
 	}
 
 	private AdminControlPanel() {	
+		//Create the root
 		root = new DefaultMutableTreeNode("Root");
+		
+		//Get access to database
 		database = Database.getInstance();
 				
-		//Set bounds and size of the window 
+		//Set bounds and size of the Admin Control Panel
 		setBounds(100, 100, 656, 350);
 		
 		//Specify what happens when the close button is clicked
@@ -110,7 +114,6 @@ public class AdminControlPanel extends JFrame{
 		openUserViewButton.addActionListener(new OpenUserViewButtonListener());
 
 		//Create a JPanel object and let the contentPane field reference it
-		//A JPanel object is used to hold other components
 		contentPane = new JPanel();
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
@@ -133,18 +136,25 @@ public class AdminControlPanel extends JFrame{
 	
 	private class AddUserButtonListener implements ActionListener{
 		public void actionPerformed(ActionEvent e){	
+			//Declare variable for selected node
 			selectedNode = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
+			
+			//Store userId
 			userId = userIdTextField.getText();
 
+			//If userId field is blank
 			if (userId.isEmpty() == true){
 				showMessage("ERROR: Please enter a user ID.");
 			}
+			//If user already exists
 			else if (database.containsUser(userId)){
 				showMessage("ERROR: " + userIdTextField.getText() + " already exists as a user.");
 			}
+			//If no group is selected
 			else if (selectedNode == null){
 				addUser(userId, root);
 			}
+			//If an attempt is made to store user within another user
 			else if (database.containsGroup(selectedNode.toString()) == false && selectedNode.toString().equals("Root") == false){
 				showMessage("ERROR: you must store your user in a group OR the root.");
 			}
@@ -158,19 +168,25 @@ public class AdminControlPanel extends JFrame{
 
 	private class AddGroupButtonListener implements ActionListener{
 		public void actionPerformed(ActionEvent e){			
+			//Declare variable for selected node
 			selectedNode = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
+			
+			//Store groupId
 			groupId = groupIdTextField.getText();
 			
+			//If groupId field is left blank
 			if (groupId.isEmpty() == true){
 				showMessage("ERROR: please enter a group ID.");
 			}
+			//If group already exists
 			else if (database.containsGroup(groupId)){
 				showMessage("ERROR: " + groupId + " already exists as a group.");
-
 			}
+			//If no group is selected
 			else if (selectedNode == null){
 				addGroup(groupId, root);
 			}
+			//If an attempt is made to store group within a user
 			else if (database.containsGroup(selectedNode.toString()) == false && selectedNode.toString().equals("Root") == false){
 				showMessage("ERROR: you must add a group to either the root or another group.");
 			}
@@ -184,9 +200,11 @@ public class AdminControlPanel extends JFrame{
 	}
 	
 	private class OpenUserViewButtonListener implements ActionListener{
-		public void actionPerformed(ActionEvent e){			
+		public void actionPerformed(ActionEvent e){	
+			//Declare variable for selected node
 			selectedNode = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
 
+			//If no user is selected or a group is selected
             if (selectedNode == null || database.containsGroup(selectedNode.toString())){
     			showMessage("ERROR: Please select a user.");
             }
@@ -228,28 +246,44 @@ public class AdminControlPanel extends JFrame{
 	}
 	
 	public void buildTree(){
-		
+		//Create folder icon 
 		ImageIcon imageIcon = new ImageIcon(AdminControlPanel.class.getResource("/folder_closed.png"));
 		DefaultTreeCellRenderer renderer = new DefaultTreeCellRenderer();
 		
 		//Set folder icon to non-leaf nodes
 		renderer.setOpenIcon(imageIcon);
+		
+		//Create the tree
         tree = new JTree(root);
+        
+        //Set size and bounds of the tree
         tree.setBounds(10, 6, 152, 295);
+        
+        //Add tree to the contentPane
         contentPane.add(tree);
-        selectedNode = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
+        
+        //Create TreeModel from tree
         model = tree.getModel();
+        
+        //Sets DefaultTreeCellRenderer
         tree.setCellRenderer(renderer);   
         
-        JScrollPane scrollPane_1 = new JScrollPane(tree);
-        scrollPane_1.setBounds(10, 6, 152, 295);
-        contentPane.add(scrollPane_1);
+        //Create the JScrollpane for tree
+        treeScrollPane = new JScrollPane(tree);
+        
+        //Set size and bounds of the JScrollPane
+        treeScrollPane.setBounds(10, 6, 152, 295);
+        
+        //Add JScrollPane to contentPane
+        contentPane.add(treeScrollPane);
    	}
 	
+	//Method that creates dialog window
 	public void showMessage(String message){
 		JOptionPane.showMessageDialog(null, message);
 	}
 	
+	//Method that reloads and expands each node of the tree
 	public void expandTree(){
 		((DefaultTreeModel) model).reload();
 
@@ -258,25 +292,33 @@ public class AdminControlPanel extends JFrame{
 		}
 	}
 	
+	//Method to add UserGroup to the tree and database
 	public void addGroup(String id, DefaultMutableTreeNode node){
+		//Create new UserGroup object
 		UserGroup g = new UserGroup(id);
 		
 		//Add group to the database		
 		database.addGroup(id, g, database.getGroup(node.toString()));
 		
-		//Add group to the node
-		node.add(new DefaultMutableTreeNode(id));				
+		//Add group to the tree
+		node.add(new DefaultMutableTreeNode(id));		
+		
+		//Display confirmation
 		showMessage(id + " has been added as a group.");
 	}
 	
+	//Method to add User to the tree and database
 	public void addUser(String id, DefaultMutableTreeNode node){
+		//Create new User object
 		User u = new User(id);	
 		
 		//Add user to the database 
 		database.addUser(id, u, database.getGroup(node.toString()));
 		
-		//Add user to the node
+		//Add user to the tree
 		node.add(new DefaultMutableTreeNode(id));
+		
+		//Display confirmation
 		showMessage(id + " has been added as a user.");
 	}
 }

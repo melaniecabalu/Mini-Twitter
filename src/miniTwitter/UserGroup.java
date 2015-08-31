@@ -2,7 +2,7 @@ package miniTwitter;
 
 import java.util.ArrayList;
 
-public class UserGroup implements Component{
+public class UserGroup implements Component, Visitable{
 	private String id;
 	private ArrayList<User> groupMembers;
 	private ArrayList<UserGroup> subgroups;
@@ -41,9 +41,7 @@ public class UserGroup implements Component{
 		return id;
 	}
 
-	@Override
 	public void accept(Visitor v) {
-		// TODO Auto-generated method stub
-		
+		v.atUserGroup(this);
 	}
 }

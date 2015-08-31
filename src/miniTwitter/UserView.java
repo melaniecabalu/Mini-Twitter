@@ -3,6 +3,7 @@ package miniTwitter;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
@@ -14,68 +15,69 @@ public class UserView extends JFrame{
 	private JTextField userIdTextField;
 	private JButton followUserButton;
 	private Database userDatabase;
-	
+	private JLabel currentlyFollowingLabel;
 	private ArrayList<String> followingIdList;
 	private DefaultListModel<String> followingListModel;
 	private JList<String> followingList;
-
+	private JLabel newsFeedLabel;
 	private ArrayList<String> newsFeed;
 	private DefaultListModel<String> newsFeedListModel;
 	private JList<String> newsFeedList;
-	
 	private User currentUser;
-	private JLabel currentlyFollowingLabel;
 	private JTextField tweetField;	
 	private JButton postTweetButton;
-	private JLabel newsFeedLabel;
-	
 	private JScrollPane followingScrollPane;
 	private JScrollPane newsFeedScrollPane;
-	
-	/**
-	 * Create the frame.
-	 */
+
 	@SuppressWarnings("unchecked")
 	public UserView(String s) {		
 		//Get access to Mini Twitter database
 		userDatabase = Database.getInstance();
 
+		//Create DefaultListModel for the Currently Following List
 		followingListModel = new DefaultListModel<String>();
+		
+		//Create ArrayList to store ids that user is following
 		followingIdList = new ArrayList<String>();
 
+		//Create a Default List Model for the News Feed List
 		newsFeedListModel = new DefaultListModel<String>();
+		
+		//Declare ArrayList to store the tweets of all the users that the current user is following
 		newsFeed = new ArrayList<String>();
 				
 		//Set the user view for the current user
 		currentUser = userDatabase.getUser(s);
 
+		//Specify what happens when the close button is clicked
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		
+		//Set size and bounds of the UserView
 		setBounds(100, 100, 450, 451);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
+		//Create userIdTextField
 		userIdTextField = new JTextField();
 		userIdTextField.setBounds(10, 11, 187, 20);
-		contentPane.add(userIdTextField);
 		userIdTextField.setColumns(20);
 		
+		//Create Follow User Button
 		followUserButton = new JButton("Follow User");
 		followUserButton.setBounds(207, 10, 217, 23);
 		
 		//Add an action listener to Follow User button
 		followUserButton.addActionListener(new FollowUserButtonListener());
 		
-		//set Currently Following Label
+		//Create Currently Following Label
 		currentlyFollowingLabel = new JLabel("Currently Following:");
 		currentlyFollowingLabel.setBounds(20, 44, 177, 14);
 		
 		//Initialize the Following List
 		followingList = new JList<String>(followingListModel);
 		followingList.setBounds(10, 65, 414, 143);
-		
-		//Get all the IDs of followed users and store in the Following List
 		followingIdList = (ArrayList<String>) currentUser.getFollowerIds().clone();
 
 		//Populate the Following List Model with previously followed users
@@ -83,22 +85,25 @@ public class UserView extends JFrame{
 			followingListModel.addElement(followingIdList.get(i));
 		}
 	
+		//Create tweetField
 		tweetField = new JTextField();
 		tweetField.setColumns(20);
 		tweetField.setBounds(10, 232, 272, 20);
 		
+		//Create Post Tweet Button
 		postTweetButton = new JButton("Post tweet");
 		postTweetButton.setBounds(292, 231, 113, 23);
+		
+		//Add an action listener to the TweetButton
 		postTweetButton.addActionListener(new PostTweetButtonListener());
 	
+		//Create newsFeedLabel
 		newsFeedLabel = new JLabel("News Feed:");
 		newsFeedLabel.setBounds(20, 263, 211, 14);
 		
 		//Initialize the News Feed List
 		newsFeedList = new JList<String>(newsFeedListModel);
 		newsFeedList.setBounds(20, 287, 385, 114);
-
-		//Store news feed of current user in the User View
 		newsFeed = (ArrayList<String>) currentUser.getNewsFeed().clone();
 		
 		//Populate the News Feed Model with previous tweets
@@ -107,6 +112,7 @@ public class UserView extends JFrame{
 		}
 
 		//Add to content pane
+		contentPane.add(userIdTextField);
 		contentPane.add(followUserButton);
 		contentPane.add(currentlyFollowingLabel);
 		contentPane.add(followingList);
@@ -115,20 +121,22 @@ public class UserView extends JFrame{
 		contentPane.add(newsFeedLabel);
 		contentPane.add(newsFeedList);
 		
+		//Create JScrollPane for the Currently Following List
 		followingScrollPane = new JScrollPane(followingList);
 		followingScrollPane.setBounds(10, 64, 414, 144);
 		contentPane.add(followingScrollPane);
 		
+		//Create JScrollPane for the News Feed
 		newsFeedScrollPane = new JScrollPane(newsFeedList);
 		newsFeedScrollPane.setBounds(20, 287, 385, 114);
 		contentPane.add(newsFeedScrollPane);
 	}
 	
+	//Method to return the current user's id
 	public String getUserId(){
 		return currentUser.getId();
 	}
 	
-	//Follow user: add user to userId's follower list
 	private class FollowUserButtonListener implements ActionListener{
 		public void actionPerformed(ActionEvent e){	
 			//Set the user ID of the user to follow
@@ -137,12 +145,15 @@ public class UserView extends JFrame{
 			//Retrieve the user associated with the user ID
 			User followedUser = userDatabase.getUser(userId);
 			
+			//If the user does not exist
 			if (userDatabase.containsUser(userId) == false){
 				showMessage("ERROR: that user ID does not exist.");
 			}
+			//If current user is already following the user
 			else if (currentUser.isFollowing(followedUser)){
 				showMessage("ERROR: you are already following " + userId + ".");
 			}
+			//If current user tries to follow himself/herself
 			else if (userId.equals(currentUser.getId())){
 				showMessage("ERROR: you cannot follow yourself.");
 			}
@@ -150,20 +161,16 @@ public class UserView extends JFrame{
 				//Follow the specified user
 				currentUser.follow(followedUser);
 			
-				//Current user is attached to the followers list of the specified user
+				//Attach the current user to the followers list of the specified user
 				followedUser.attach(currentUser);
 			
+				//Display confirmation of the following
 				showMessage("You are now following " + followedUser.getId() + ".");
 				
-				//Display the specified user in current user's Following List
+				//Display the specified user in current user's following list view
 				followingListModel.addElement(followedUser.getId());
-				
 			}
 		}
-	}
-	
-	public DefaultListModel<String> getNewsFeedModel(){
-		return newsFeedListModel;
 	}
 	
 	private class PostTweetButtonListener implements ActionListener{
@@ -171,12 +178,14 @@ public class UserView extends JFrame{
 			//Current user sends tweet to all followers
 			currentUser.notify("-   " + currentUser.getId() + ": " + tweetField.getText());
 			
-			//Add tweet to current user's news feed
+			//Add tweet to current user's news feed view
 			newsFeedListModel.addElement("-   " + currentUser.getId() + ": " + tweetField.getText());
-						
+			
+			//Increment message total
 			MessagesTotalVisitor messageTotalVis = MessagesTotalVisitor.getInstance();
 			currentUser.accept(messageTotalVis);
 				
+			//Check for positive words
 			PositivePercentageVisitor posPercentageVis = PositivePercentageVisitor.getInstance();
 			currentUser.accept(posPercentageVis);
 		};

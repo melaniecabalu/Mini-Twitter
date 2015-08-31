@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class User extends Subject implements Observer, Component, Visitable{
 	private String id;
-	private UserGroup parentGroup; //do i need this
+	private UserGroup parentGroup;
 	private ArrayList<User> followers;
 	private ArrayList<User> followings;
 	private ArrayList<String> newsFeed;
@@ -18,10 +18,6 @@ public class User extends Subject implements Observer, Component, Visitable{
 		followings = new ArrayList<User>();
 		newsFeed = new ArrayList<String>();
 		tweets = new ArrayList<String>();
-	}
-	
-	public void accept(Visitor v){
-		v.atUser(this);
 	}
 	
 	public String getId(){
@@ -99,5 +95,9 @@ public class User extends Subject implements Observer, Component, Visitable{
 			//Call follower's update method
 			followers.get(i).update(tweet);
 		}
+	}
+	
+	public void accept(Visitor v){
+		v.atUser(this);
 	}
 }

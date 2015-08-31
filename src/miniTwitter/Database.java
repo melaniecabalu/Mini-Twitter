@@ -12,6 +12,7 @@ public class Database implements Visitable{
 	private int groupTotal;
 	private boolean containsFlag;
 	
+	//Return instance of the database
 	public static Database getInstance(){
 		if (instance == null)
 			instance = new Database();
@@ -28,57 +29,57 @@ public class Database implements Visitable{
 		groups.put("Root", root);
 	}
 	
+	//Method to add user to the database
 	public void addUser(String id, User u, UserGroup parentGroup){
-		//Add the user to database user array
+		//Store user in the User map
 		users.put(id, u);
 		
-		//Add user to the parent group	
+		//Add user to the parent UserGroup object
 		parentGroup.addChild(getUser(id));
 				
-		//Set the user's parent group
+		//Set the user's parent UserGroup
 		getUser(id).setParent(parentGroup);
 		
+		//Increment user total
 		userTotal++;
 	}
 	
+	//Method to add UserGroup to the database
 	public void addGroup(String id, UserGroup g, UserGroup parentGroup){
-		//Add the user to database
+		//Put group in the UserGroup map
 		groups.put(id, g);
 		
-		//Add the subgroup to the parent
+		//Add the subgroup to the parent UserGroup object
 		parentGroup.addSubgroup(getGroup(id));
 
-		//Set the group BLAH FIX THIS WORDING IT SUCKS
+		//Set the subgroup's parent UserGroup
 		getGroup(id).setParent(parentGroup);
 		
+		//Increment group total
 		groupTotal++;
 	}
 	
-	public User getUser(String s){
-		return users.get(s);
+	//Method to return user with specified id 
+	public User getUser(String id){
+		return users.get(id);
 	}
 	
-	public UserGroup getGroup(String s){
-		return groups.get(s);
+	//Method to return UserGroup with specified id
+	public UserGroup getGroup(String id){
+		return groups.get(id);
 	}
 	
-	public Map<String, UserGroup> getGroup(){
-		return groups;
-	}
-	
+	//Method to return total number of Users in the database
 	public int getUserTotal(){
 		return userTotal;
 	}
 	
+	//Method to return total number of UserGroups in the database
 	public int getGroupTotal(){
 		return groupTotal;
 	}
 	
-	//testing?
-	public Map<String, User> getUsers(){
-		return users;
-	}
-	
+	//Method to determine if database contains a User with specified id
 	public boolean containsUser(String s){
 		//reset containsFlag
 		containsFlag = false;
@@ -92,6 +93,7 @@ public class Database implements Visitable{
 		}
 	}
 	
+	//Method to determine if database contains a UserGroup with specified id
 	public boolean containsGroup(String s){
 		//reset containsFlag
 		containsFlag = false;
@@ -105,9 +107,7 @@ public class Database implements Visitable{
 		}
 	}
 
-	@Override
 	public void accept(Visitor v) {
 		v.atDatabase(this);
-		
 	}
 }
